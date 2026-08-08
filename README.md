@@ -4,8 +4,23 @@ An open, source-verified database of atmospheric muon differential momentum
 spectra compiled from nine historical cosmic-ray experiments, together with
 the pipeline that builds it and a desktop app for exploring it.
 
-Companion code for the paper *An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles*, submitted to *Astroparticle
-Physics*.
+Companion code for the paper *An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles*, submitted to *Astroparticle Physics*.
+
+## Experiments included
+
+| Experiment | Rows | Reference |
+|---|---|---|
+| DEIS | 208 | Allkofer, O.C., Bella, G., Dau, W.D., Jokisch, H., Klemke, G., Oren, Y., Uhr, R., "Cosmic ray muon spectra at sea-level up to 10 TeV," *Nucl. Phys. B* 259 (1985) 1–18 |
+| AMH | 21 | Green, P. J., Duller, N. M., Magnuson, C. E., Choate, L. M., Sheldon, W. R., Osborne, A. R., Benbrook, J. R., Abdel-Monem, M. S., "Absolute intensities of medium-energy muons in the vertical and at zenith angles 55°–85°," *Phys. Rev. D* 20 (1979) 1598–1607 |
+| OKAYAMA | 216 | Tsuji, S., Katayama, T., Okei, K., Wada, T., Yamamoto, I., Yamashita, Y., "Measurements of muons at sea level," *J. Phys. G: Nucl. Part. Phys.* 24 (1998) 1805–1822 |
+| Kiel-DESY | 29 | Jokisch, H., Carstensen, K., Dau, W. D., Meyer, H. J., Allkofer, O. C., "Cosmic-ray muon spectrum up to 1 TeV at 75° zenith angle," *Phys. Rev. D* 19 (1979) 1368–1372 |
+| MUTRON | 24 | Matsuno, S., et al., "Cosmic-ray muon spectrum up to 20 TeV at 89° zenith angle," *Phys. Rev. D* 29, No. 1 (1984) 1–11 |
+| L3+C | 98 | Achard, P., et al. [L3 Collaboration], "Measurement of the Atmospheric Muon Spectrum from 20 to 3000 GeV," *Physics Letters B* 598 (2004) 15–32 (arXiv:hep-ex/0408114) |
+| De Pascale | 21 | De Pascale, M. P., Morselli, A., Picozza, P., Golden, R. L., Grimani, C., Kimbell, B. L., Stephens, S. A., Stochaj, S. J., Webber, W. R., et al., "Absolute Spectrum and Charge Ratio of Cosmic Ray Muons in the Energy Region From 0.2 GeV to 100 GeV at 600 m Above Sea Level," *J. Geophys. Res.* 98(A3) (1993) 3501–3508 |
+| Kellogg | 18 | Kellogg, R. G., Kasha, H., Larsen, R. C., "Momentum spectra, charge ratio, and zenith-angle dependence of cosmic-ray muons," *Phys. Rev. D* 17 (1978) 98–113 |
+| Nottingham | 52 | Judge, R. J. R., Nash, W. F., "Measurements on the Muon Flux at Various Zenith Angles," *Il Nuovo Cimento* 35 (1965) 999–1024 |
+
+**Total: 687 rows** across all nine experiments.
 
 ## Repository layout
 
