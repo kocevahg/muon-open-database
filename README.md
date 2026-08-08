@@ -142,6 +142,3 @@ If you use this database, please cite:
 
 > Khirstina Kotseva, Sergey Gorbunov, "An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles", *Astroparticle Physics* (in review)
 
-## License
-
-[Add a license, e.g. MIT]
