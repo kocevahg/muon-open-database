@@ -32,10 +32,12 @@ These tables represent different projections of the same measurement
 campaign. They are therefore kept as separate raw datasets rather than
 merged.
 
-At θ = 0° and p = 12.5, 22.5, and 45 GeV/c, Table 2 and Table 3 contain
-identical published values. These duplicate rows are removed in
-transform(). Measurements at θ = 60° and 80° are retained independently,
-since the published values differ slightly.
+At θ = 0°, 60° and 80°, Table 2 and Tables 3-5 report the same angular
+window and the same momentum window (12.5±2.5, 22.5±2.5, 45±5 GeV/c) with
+identical or near-identical event counts: they are the same muons tabulated
+twice, and the printed intensities differ only in the last digit. transform()
+keeps the Tables 3-5 row and drops the Table 2 duplicate. Duplicates are
+identified by (theta_min, theta_max, momentum_min, momentum_max).
 
 Table 3 contains three cells at θ = 80° where the printed entry is "--",
 indicating that no intensity was reported. These are stored as None and
@@ -343,7 +345,7 @@ def _wide_bin_rows(bin_: WideBin) -> list:
             f"momentum bin printed as {bin_.momentum_min[i]}-{bin_.momentum_max[i]} GeV/c."
         )
 
-        key = (EXPERIMENT, bin_.theta_center, bin_.momentum[i], intensity)
+        key = (EXPERIMENT, bin_.theta_min, bin_.theta_max, bin_.momentum_min[i], bin_.momentum_max[i])
         rows.append(dict(
             experiment=EXPERIMENT,
             reference=REFERENCE,
@@ -383,7 +385,7 @@ def _fine_scan_rows(row: FineScanRow) -> list:
             f"printed as {row.momentum[i]}+-{hw} GeV/c "
             f"(equivalent to a {row.momentum[i]-hw}-{row.momentum[i]+hw} GeV/c bin). "
         )
-        key = (EXPERIMENT, row.theta_center, row.momentum[i], intensity)
+        key = (EXPERIMENT, row.theta_min, row.theta_max, row.momentum[i] - hw, row.momentum[i] + hw)
         rows.append(dict(
             experiment=EXPERIMENT,
             reference=REFERENCE,
@@ -419,8 +421,8 @@ def transform(include_80deg: bool = True, dedupe: bool = True) -> list:
 
     dedupe : bool
         Remove exact duplicate measurements occurring between Table 2 and
-        Tables 3-5. Only rows with identical theta, momentum, and intensity
-        values are removed.
+        Tables 3-5. Rows with the same angular window and momentum window are the same muons;
+        the Tables 3-5 row is kept
 
     Returns
     -------
@@ -569,50 +571,6 @@ def print_transformed_data():
             f"{str(r['measured_number']):>8} "
             f"{r['source_table']:>12}"
         )
-
-
-def find_true_duplicates() -> list:
-    """
-    Compare overlapping measurements between Table 2 and Tables 3-5.
-    Rows are matched by (theta_center, momentum). The returned list
-    identifies whether each overlap is an exact duplicate based on the
-    published intensity value.
-
-    Returns
-    -------
-    list[dict]
-        Diagnostic information for overlapping cells, including the
-        intensities, event counts, source table, and duplicate status.
-    """
-    wide = []
-    for bin_ in RAW_WIDE_BINS:
-        wide.extend(_wide_bin_rows(bin_))
-    fine = []
-    for row in RAW_FINE_SCAN:
-        fine.extend(_fine_scan_rows(row))
-
-    wide_by_key = {}
-    for r in wide:
-        wide_by_key.setdefault((r["theta_center"], r["momentum"]), []).append(r)
-
-    report = []
-    for r in fine:
-        cand = wide_by_key.get((r["theta_center"], r["momentum"]))
-        if not cand:
-            continue
-        for w in cand:
-            exact = (w["intensity"] == r["intensity"])
-            report.append(dict(
-                theta_center=r["theta_center"],
-                momentum=r["momentum"],
-                fine_scan_intensity=r["intensity"],
-                fine_scan_N=r["measured_number"],
-                wide_bin_intensity=w["intensity"],
-                wide_bin_N=w["measured_number"],
-                wide_bin_source_table=w["source_table"],
-                exact_duplicate=exact,
-            ))
-    return report
 
 
 if __name__ == "__main__":
