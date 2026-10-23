@@ -165,6 +165,8 @@ COMBINED_NOTES = MODEL_DEPENDENCE_CAVEAT + " || " + GEOMAGNETIC_DEFLECTION_CAVEA
 # ---------------------------------------------------------------------------
 # 5. transform() -- turns RAW_TABLE_II (+ RAW_TABLE_I) into unified rows
 # ---------------------------------------------------------------------------
+Z_95 = 1.96
+
 def transform() -> list[dict]:
     """
     Convert the raw Table II values into the common data format.
@@ -177,7 +179,7 @@ def transform() -> list[dict]:
         2. The systematic uncertainty is calculated from the ±5%
         absolute-calibration uncertainty reported in Table I:
 
-                sys_error = intensity × 0.05
+                sys_error = intensity × 0.05 / 1.96
 
         3. The published 75 deg spectrum represents measurements over
         the 68-82 deg zenith range, as described in Sec. IV.
@@ -188,7 +190,7 @@ def transform() -> list[dict]:
         stat_error = intensity * (error_pct / 100.0)
 
         # absolute calibration systematic error (Table I, +/-5%, 95% CL)
-        sys_error = intensity * (RAW_TABLE_I["rate_absolute_calibration_error_pct"] / 100.0)
+        sys_error = intensity * (RAW_TABLE_I["rate_absolute_calibration_error_pct"] / 100.0) / Z_95
 
         rows.append({
             "experiment": "Kiel-DESY",
@@ -208,9 +210,9 @@ def transform() -> list[dict]:
             "sys_error": sys_error,
             "sys_error_pct_raw": RAW_TABLE_I["rate_absolute_calibration_error_pct"],
             "error_note": (
-                "stat_error = intensity * (raw_percent_error_from_Table_II / 100); "
-                "sys_error = intensity * (0.05) absolute calibration error, Table I, "
-                "95% CL, independent of stat_error (not pre-combined)."
+                "sys_error = intensity * 0.05 / 1.96 (absolute calibration error, Table I, "
+                "quoted at 95% CL, converted to 1 sigma = 2.55%), independent of "
+                "stat_error (not pre-combined)."
             ),
             "source_table": "Table II, Jokisch et al. 1979",
             "measured_number_raw": measured_number,  # raw bin count
