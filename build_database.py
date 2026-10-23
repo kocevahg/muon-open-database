@@ -100,8 +100,13 @@ DATA_DICTIONARY = [
     ("momentum_min / momentum_max", "Momentum bin edges in GeV/c. NULL where the paper gives only a central momentum."),
     ("intensity", "Differential muon intensity, (GeV/c)^-1 cm^-2 s^-1 sr^-1."),
     ("stat_error", "Statistical (point-to-point) uncertainty on intensity, same units."),
-    ("sys_error", "Systematic / normalization uncertainty on intensity, same units."),
-    ("total_error", "Combined uncertainty: sqrt(stat^2 + sys^2) where both exist, else whichever single component the paper reports."),
+    ("sys_error", "Systematic / normalization uncertainty on intensity, same units, "
+                  "quoted as 1 sigma. Kiel-DESY: the +-5% (95% CL) calibration error "
+                  "of Jokisch et al. is divided by 1.96 (about 2.55%). NULL where the "
+                  "source reports none (AMH, OKAYAMA, Nottingham)."),
+    ("total_error", "Combined uncertainty: sqrt(stat^2 + sys^2) where both exist, else "
+                    "whichever single component the paper reports. Nottingham stores its "
+                    "single published uncertainty here only (stat_error and sys_error are NULL)."),
     ("error_note", "Short note on what this row's errors include."),
     ("notes", "Other caveats: model-dependence, azimuth ambiguity, large-error bins, etc."),
     ("additional_details", "Experiment-specific extras (event counts, De Pascale mu+/mu- split, etc.)."),
@@ -245,10 +250,17 @@ def build_processed_database(all_rows, db_path, csv_path):
             total_error         REAL,
             error_note          TEXT,
             notes               TEXT,
-            additional_details  TEXT,
-            UNIQUE (experiment, theta_center, momentum, intensity)
+            additional_details  TEXT
         )
     """)
+    cur.execute("""
+            CREATE UNIQUE INDEX uq_muon_window ON muon_data (
+                experiment,
+                COALESCE(theta_min, theta_center), COALESCE(theta_max, theta_center),
+                COALESCE(momentum_min, momentum),  COALESCE(momentum_max, momentum),
+                COALESCE(azimuth, '')
+            )
+        """)
     # Units and conventions are documented once, here, as plain sentences
     cur.execute("""
         CREATE TABLE data_dictionary (
@@ -264,8 +276,8 @@ def build_processed_database(all_rows, db_path, csv_path):
     """)
     cur.execute(
         "INSERT INTO data_dictionary_notes VALUES (?)",
-        ("The UNIQUE constraint on (experiment, theta_center, momentum, "
-         "intensity) guards against the exact row-duplication bug",),
+        ("A UNIQUE index on (experiment, angular window, momentum window, "
+         "azimuth) - prevents the same measurement being stored twice.",),
     )
 
     n_inserted = 0
@@ -304,7 +316,7 @@ def build_processed_database(all_rows, db_path, csv_path):
     cur.execute("PRAGMA table_info(muon_data)")
     colnames = [c[1] for c in cur.fetchall()]
     cur.execute("SELECT * FROM muon_data ORDER BY experiment, theta_center, momentum")
-    with open(csv_path, "w", newline="", encoding="utf-8-sig") as f:
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(colnames)
         w.writerows(cur.fetchall())
@@ -377,7 +389,7 @@ def build_raw_database(modules, db_path, csv_path):
     conn.commit()
 
     cur.execute("SELECT experiment, raw_table, record_label, raw_values FROM raw_records ORDER BY experiment, raw_table, id")
-    with open(csv_path, "w", newline="", encoding="utf-8-sig") as f:
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["experiment", "raw_table", "record_label", "raw_values (plain text, not JSON)"])
         w.writerows(cur.fetchall())
@@ -397,7 +409,7 @@ def write_sources_csv(per_experiment_counts, modules, path):
             "n_rows_in_processed_db": per_experiment_counts.get(mod_name, 0),
             "docstring_summary": first_line,
         })
-    with open(path, "w", newline="", encoding="utf-8-sig") as f:
+    with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=["module", "n_rows_in_processed_db", "docstring_summary"])
         w.writeheader()
         w.writerows(rows)
