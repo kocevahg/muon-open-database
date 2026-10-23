@@ -6,6 +6,10 @@ the pipeline that builds it and a desktop app for exploring it.
 
 Companion code for the paper *An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles*, submitted to *Astroparticle Physics*.
 
+## Licence
+- Code (`*.py`): MIT, see `LICENSE`
+- Data (`muon_data.*`): CC BY 4.0
+  
 ## Experiments included
 
 | Experiment | Rows | Reference |
@@ -141,4 +145,5 @@ python coverage_plot.py                   # angle/momentum coverage map
 If you use this database, please cite:
 
 > Khirstina Kotseva, Sergey Gorbunov, "An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles", *Astroparticle Physics* (in review)
+> Zenodo* 
 
