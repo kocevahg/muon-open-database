@@ -66,12 +66,28 @@ def _segments(cur):
     return [dict(exp=r[0], th=r[1], pmin=r[2], pmax=r[3], n=r[4]) for r in cur.fetchall()]
 
 
-def _load(cur, experiment, theta):
+def _series_at(cur, experiment, theta):
+    """All distinct series at (experiment, theta): one per azimuth, using the
+    source table with the most points. Returns [(exp, theta, azimuth, source_table)]."""
+    cur.execute(
+        "SELECT azimuth, source_table, COUNT(*) FROM muon_data "
+        "WHERE experiment=? AND theta_center=? AND intensity IS NOT NULL "
+        "GROUP BY azimuth, source_table",
+        (experiment, theta),
+    )
+    best = {}
+    for az, src, n in cur.fetchall():
+        if az not in best or n > best[az][1]:
+            best[az] = (src, n)
+    return [(experiment, theta, az, best[az][0]) for az in sorted(best, key=str)]
+
+
+def _load(cur, experiment, theta, azimuth, source_table):
     cur.execute(
         "SELECT momentum, intensity, total_error FROM muon_data "
-        "WHERE experiment=? AND theta_center=? AND intensity IS NOT NULL "
-        "ORDER BY momentum",
-        (experiment, theta),
+        "WHERE experiment=? AND theta_center=? AND azimuth IS ? AND source_table IS ? "
+        "AND intensity IS NOT NULL ORDER BY momentum",
+        (experiment, theta, azimuth, source_table),
     )
     rows = cur.fetchall()
     p = np.array([r[0] for r in rows], float)
@@ -187,12 +203,23 @@ def compare(cur, ref, other, label=None):
 def run_all(db=DB):
     conn = sqlite3.connect(db)
     cur = conn.cursor()
+    # experiments stored with more than one azimuth (Nottingham East / West)
+    multi = {r[0] for r in cur.execute(
+        "SELECT experiment FROM muon_data GROUP BY experiment "
+        "HAVING COUNT(DISTINCT azimuth) > 1")}
+
+    def name(s):
+        az = f" {s[2]}" if s[0] in multi else ""
+        return f"{s[0]} ({s[1]:g}\u00b0{az})"
+
     results = []
     for A, thA, B, thB in detect_comparisons(cur):
-        label = f"{B} ({thB:g}\u00b0) vs {A} ({thA:g}\u00b0)"
-        r = compare(cur, (A, thA), (B, thB), label=label)
-        if r:
-            results.append(r)
+        # one comparison per azimuth at the chosen angles
+        for sa in _series_at(cur, A, thA):
+            for sb in _series_at(cur, B, thB):
+                r = compare(cur, sa, sb, label=f"{name(sb)} vs {name(sa)}")
+                if r:
+                    results.append(r)
     conn.close()
     results.sort(key=lambda r: (r["theta_ref"], r["label"]))
     return results
@@ -213,7 +240,7 @@ def print_summary(results):
 
 
 def write_csv(results, path="overlap_summary.csv"):
-    with open(path, "w", encoding="utf-8-sig") as f:
+    with open(path, "w", encoding="utf-8") as f:
         f.write("comparison,ref_exp,ref_theta,other_exp,other_theta,dtheta,"
                 "p_min,p_max,n_points,chi2,chi2_ndf,mean_ratio\n")
         for r in results:
@@ -274,3 +301,4 @@ if __name__ == "__main__":
     res = run_all()
     print_summary(res)
     write_csv(res)
+    plot(res)
