@@ -84,7 +84,7 @@ each time.
 
 ### `muon_spectrum_visualization.py`
 
-A PyQt6 desktop app for browsing the database interactively: a hierarchical
+A PyQt6 desktop visualization tool for browsing the database interactively: a hierarchical
 experiment -> angle tree for selecting which spectra to plot, a log-log
 matplotlib canvas, and a choice of statistical / systematic / total error
 bars.
@@ -93,6 +93,8 @@ bars.
 pip install PyQt6 matplotlib numpy
 python muon_spectrum_visualization.py
 ```
+
+![Screenshot of the viewer tool](Screenshot_viewer_tool.png)
 
 ### `overlap_analysis.py`
 
@@ -145,5 +147,6 @@ python coverage_plot.py                   # angle/momentum coverage map
 If you use this database, please cite:
 
 > Khirstina Kotseva, Sergey Gorbunov, "An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles", *Astroparticle Physics* (in review)
+
 > Zenodo* 
 
