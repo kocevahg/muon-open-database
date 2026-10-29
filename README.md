@@ -96,6 +96,11 @@ python muon_spectrum_visualization.py
 
 ![Screenshot of the viewer tool](Screenshot_viewer_tool.png)
 
+#### Pre-built Windows executable
+
+MuonSpectrumViewer.exe is a convenience build of muon_spectrum_visualization.py for users without a Python installation. It is not needed to use the database. It reads muon_data.db, which must be in the same folder. The executable is available from the software record on Zenodo [doi:10.5281/zenodo.23776980](https://doi.org/10.5281/zenodo.23776980). The Python source in this repository is the reference implementation.
+
+
 ### `overlap_analysis.py`
 
 For every pair of experiments that overlap in both zenith angle and
