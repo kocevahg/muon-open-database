@@ -148,5 +148,5 @@ If you use this database, please cite:
 
 > Khirstina Kotseva, Sergey Gorbunov, "An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles", *Astroparticle Physics* (in review)
 
-> Zenodo* 
+> Kotseva, K., & Gorbunov, S. (2026). Atmospheric Muon Differential Spectra Database Viewer [Computer software]. Zenodo. https://zenodo.org/records/21852253
 
