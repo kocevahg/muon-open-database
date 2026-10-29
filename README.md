@@ -8,7 +8,7 @@ Companion code for the paper *An open database of the energy and angular distrib
 
 ## Licence
 - Code (`*.py`): MIT, see `LICENSE`
-- Data (`muon_data.*`): CC BY 4.0
+- Data (`muon_data.*`): CC BY 4.0, see `LICENSE-CC-BY`
   
 ## Experiments included
 
