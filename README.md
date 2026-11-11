@@ -4,7 +4,7 @@ An open, source-verified database of atmospheric muon differential momentum
 spectra compiled from nine historical cosmic-ray experiments, together with
 the pipeline that builds it and a desktop app for exploring it.
 
-Companion code for the paper *An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles*, submitted to *Astroparticle Physics*.
+Companion code for the paper *An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles*, submitted to *Astroparticle Physics*. (https://doi.org/10.1016/j.astropartphys.2026.103315)
 
 ## Licence
 - Code (`*.py`): MIT, see `LICENSE`
@@ -151,7 +151,7 @@ python coverage_plot.py                   # angle/momentum coverage map
 
 If you use this database, please cite:
 
-> Khirstina Kotseva, Sergey Gorbunov, "An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles", *Astroparticle Physics* (in review)
+> Khirstina Kotseva, Sergey Gorbunov, "An open database of the energy and angular distribution of atmospheric muons, with emphasis on large zenith angles", *Astroparticle Physics* (in press) https://doi.org/10.1016/j.astropartphys.2026.103315
 
 > Kotseva, K., & Gorbunov, S. (2026). Atmospheric Muon Differential Spectra Database Viewer [Computer software]. Zenodo. https://doi.org/10.5281/zenodo.23776980
 
